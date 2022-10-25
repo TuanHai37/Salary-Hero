@@ -3,10 +3,12 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  OneToMany,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Company } from './companies.entity';
+import { Requests } from './requests.entity';
 import { Role } from 'src/common/enums/role.enum';
 
 @Entity({
@@ -27,6 +29,11 @@ export class User {
   })
   company_id: Company;
 
+  @OneToMany(() => Requests, (request) => request.user, {
+    createForeignKeyConstraints: true,
+  })
+  request?: Request[];
+
   @Column({
     type: 'enum',
     enum: Role,
@@ -34,11 +41,7 @@ export class User {
   })
   role: Role;
 
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    unique: true,
-  })
+  @PrimaryGeneratedColumn('uuid')
   code: string;
 
   @Column({

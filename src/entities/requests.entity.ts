@@ -11,23 +11,26 @@ import { User } from './users.entity';
 @Entity({
   name: 'requests',
 })
-export class Request {
+export class Requests {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.user_id, {
-    createForeignKeyConstraints: false,
+  @ManyToOne(() => User, (user) => user.request, {
+    createForeignKeyConstraints: true,
   })
   @JoinColumn({
     name: 'user_id',
   })
-  user_id?: User;
+  user?: User;
+
+  @Column()
+  user_id: number;
 
   @Column({
     type: 'decimal',
-    precision: 12,
-    scale: 2,
     nullable: true,
+    precision: 10,
+    scale: 2,
   })
   amount: number;
 

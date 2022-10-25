@@ -26,13 +26,6 @@ export class Company {
   })
   admin_id: User;
 
-  @Column({
-    type: 'varchar',
-    nullable: false,
-    unique: true,
-  })
-  code: string;
-
   @CreateDateColumn({
     type: 'timestamp',
   })

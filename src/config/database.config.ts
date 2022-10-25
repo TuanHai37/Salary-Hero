@@ -12,7 +12,7 @@ export const databaseConfig = (): PostgresConnectionOptions => ({
   entities: [join(__dirname, '../**/*.entity{.ts,.js}')],
   synchronize: true,
   dropSchema: false,
-  migrationsRun: true,
+  migrationsRun: false,
   logging: true,
   migrations: [join(__dirname, '../database/migrations/**/*{.ts,.js}')],
   cli: {
