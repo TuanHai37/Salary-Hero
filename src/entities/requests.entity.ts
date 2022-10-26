@@ -5,6 +5,7 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './users.entity';
 
@@ -12,19 +13,23 @@ import { User } from './users.entity';
   name: 'requests',
 })
 export class Requests {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({
+    name: 'id',
+    type: 'integer',
+  })
   id: number;
 
-  @ManyToOne(() => User, (user) => user.request, {
-    createForeignKeyConstraints: true,
+  @Column({
+    name: 'user_id',
+    nullable: false,
   })
+  user_id: number;
+
+  @ManyToOne(() => User, (user) => user.requests, { onDelete: 'CASCADE' })
   @JoinColumn({
     name: 'user_id',
   })
   user?: User;
-
-  @Column()
-  user_id: number;
 
   @Column({
     type: 'decimal',
@@ -46,7 +51,7 @@ export class Requests {
   })
   created_at: Date;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamp',
   })
   updated_at: Date;

@@ -17,7 +17,7 @@ import {
   EditCompanyDto,
 } from './dto/salary-hero.dto';
 
-@Controller('/sh')
+@Controller('/sh/salary-hero')
 @ApiTags('salary-hero')
 @UseGuards(AuthGuard('salary-hero-api-key'))
 @ApiHeader({
@@ -43,11 +43,11 @@ export class SalaryHeroController {
   }
 
   @Post('/add-client-admin')
-  addClientAdmin(@Body() { name, salary, company_id }: CreateClientAdminDto) {
-    return this.salaryHeroService.addClientAdmin(name, salary, company_id);
+  addClientAdmin(@Body() { name, email, company_id }: CreateClientAdminDto) {
+    return this.salaryHeroService.addClientAdmin(name, email, company_id);
   }
 
-  @Put('/update-company')
+  @Put('/update-company/:company_id')
   editCompany(
     @Body() { name }: EditCompanyDto,
     @Param('company_id') company_id: number,

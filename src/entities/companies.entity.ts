@@ -2,9 +2,9 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { User } from './users.entity';
 
@@ -20,18 +20,15 @@ export class Company {
   })
   name: string;
 
-  @OneToOne(() => User, (user) => user.user_id)
-  @JoinColumn({
-    name: 'user_id',
-  })
-  admin_id: User;
+  @OneToMany(() => User, (user) => user.company)
+  user: User;
 
   @CreateDateColumn({
     type: 'timestamp',
   })
   created_at: Date;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamp',
   })
   updated_at: Date;

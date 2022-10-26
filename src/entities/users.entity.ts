@@ -2,17 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Generated,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Company } from './companies.entity';
 import { Requests } from './requests.entity';
 import { Role } from 'src/common/enums/role.enum';
-
+import { IsEmail } from 'class-validator';
 @Entity({
-  name: 'requests',
+  name: 'users',
 })
 export class User {
   @PrimaryGeneratedColumn()
@@ -23,16 +25,17 @@ export class User {
   })
   name: string;
 
-  @OneToOne(() => Company, (company) => company.company_id)
+  @Column()
+  company_id: number;
+
+  @ManyToOne(() => Company, (company) => company.user)
   @JoinColumn({
     name: 'company_id',
   })
-  company_id: Company;
+  company: Company;
 
-  @OneToMany(() => Requests, (request) => request.user, {
-    createForeignKeyConstraints: true,
-  })
-  request?: Request[];
+  @OneToMany(() => Requests, (request) => request.user)
+  requests?: Requests[];
 
   @Column({
     type: 'enum',
@@ -41,7 +44,15 @@ export class User {
   })
   role: Role;
 
-  @PrimaryGeneratedColumn('uuid')
+  @Column({
+    length: 50,
+    unique: true,
+  })
+  @IsEmail()
+  email: string;
+
+  @Column()
+  @Generated('uuid')
   code: string;
 
   @Column({
@@ -57,7 +68,7 @@ export class User {
   })
   created_at: Date;
 
-  @CreateDateColumn({
+  @UpdateDateColumn({
     type: 'timestamp',
   })
   updated_at: Date;

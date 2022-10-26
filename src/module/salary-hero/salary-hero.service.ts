@@ -51,17 +51,24 @@ export class SalaryHeroService {
     return await this.companyRepository.save({ name });
   }
 
-  async addClientAdmin(name: string, salary: number, company_id: any) {
+  async addClientAdmin(name: string, email: string, company_id: any) {
+    email = email.toLowerCase();
     const existedCompany = await this.findOneById(company_id);
 
     if (!existedCompany) {
       throw new BadRequestException('No company found!');
     }
 
+    const existedEmail = await this.findOneByEmail(email);
+
+    if (existedEmail) {
+      throw new BadRequestException('Email had already exists!');
+    }
+
     return await this.userRepository.save({
       name,
-      salary,
       company_id,
+      email,
       role: Role.AdminCompany,
     });
   }
@@ -80,7 +87,12 @@ export class SalaryHeroService {
       throw new BadRequestException('Company already had name!');
     }
 
-    return await this.companyRepository.save({ company_id, name });
+    await this.companyRepository.update({ company_id }, { name });
+
+    return {
+      ...existedCompany,
+      name,
+    };
   }
 
   async deleteCompanyById(company_id: number) {
@@ -124,6 +136,14 @@ export class SalaryHeroService {
 
   findAllCompany() {
     return this.companyRepository.find();
+  }
+
+  findOneByEmail(email: string) {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
   }
 }
 

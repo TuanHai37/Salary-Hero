@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import configuration from './config';
+import { RolesGuard } from './guard/role.guard';
+import { AdminCompanyModule } from './module/admin-company/admin-company.module';
 import { SalaryHeroModule } from './module/salary-hero/salary-hero.module';
 
 @Module({
@@ -19,8 +21,15 @@ import { SalaryHeroModule } from './module/salary-hero/salary-hero.module';
       inject: [ConfigService],
     }),
     SalaryHeroModule,
+    AdminCompanyModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: 'APP_GUARD',
+      useClass: RolesGuard,
+    },
+  ],
 })
 export class AppModule {}
