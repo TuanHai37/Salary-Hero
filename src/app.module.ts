@@ -6,6 +6,7 @@ import { AppService } from './app.service';
 import configuration from './config';
 import { RolesGuard } from './guard/role.guard';
 import { AdminCompanyModule } from './module/admin-company/admin-company.module';
+import { EmployeeModule } from './module/employee/employee.module';
 import { SalaryHeroModule } from './module/salary-hero/salary-hero.module';
 
 @Module({
@@ -22,6 +23,7 @@ import { SalaryHeroModule } from './module/salary-hero/salary-hero.module';
     }),
     SalaryHeroModule,
     AdminCompanyModule,
+    EmployeeModule,
   ],
   controllers: [AppController],
   providers: [

@@ -125,17 +125,19 @@ export class AdminCompanyService {
       return init;
     }, {});
 
-    try {
-      for (const employee of employees) {
-        if (!cloneCompanies[employee.company_id]) {
-          return {
-            message: 'No company found',
-            data: employee,
-          };
-        }
+    for (const employee of employees) {
+      if (!cloneCompanies[employee.company_id]) {
+        return {
+          message: 'No company found',
+          data: employee,
+        };
+      }
+    }
 
+    try {
+      employees.forEach(async (employee) => {
         if (cloneUsers[employee.email]) {
-          return this.userRepository.update(
+          return await this.userRepository.update(
             { email: employee.email },
             {
               name: employee.name,
@@ -144,8 +146,8 @@ export class AdminCompanyService {
             },
           );
         }
-        return this.userRepository.save(employee);
-      }
+        return await this.userRepository.save(employee);
+      });
 
       return {
         message: 'upsert employees success',

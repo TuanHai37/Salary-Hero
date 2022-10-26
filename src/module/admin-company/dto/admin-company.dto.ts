@@ -6,6 +6,7 @@ import {
   IsEmail,
   ValidateNested,
   IsArray,
+  IsPositive,
 } from 'class-validator';
 import { Type } from 'class-transformer';
 
@@ -17,6 +18,7 @@ export class UpsertEmployeeDto {
 
   @ApiProperty({ required: true })
   @IsNumber()
+  @IsPositive()
   @IsNotEmpty()
   salary?: number;
 

@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -38,18 +39,21 @@ export class SalaryHeroController {
   }
 
   @Post('/create-company')
-  createCompany(@Body() { name }: CreateCompanyDto) {
+  createCompany(@Body(new ValidationPipe()) { name }: CreateCompanyDto) {
     return this.salaryHeroService.createCompany(name);
   }
 
   @Post('/add-client-admin')
-  addClientAdmin(@Body() { name, email, company_id }: CreateClientAdminDto) {
+  addClientAdmin(
+    @Body(new ValidationPipe())
+    { name, email, company_id }: CreateClientAdminDto,
+  ) {
     return this.salaryHeroService.addClientAdmin(name, email, company_id);
   }
 
   @Put('/update-company/:company_id')
   editCompany(
-    @Body() { name }: EditCompanyDto,
+    @Body(new ValidationPipe()) { name }: EditCompanyDto,
     @Param('company_id') company_id: number,
   ) {
     return this.salaryHeroService.updateCompany(name, company_id);

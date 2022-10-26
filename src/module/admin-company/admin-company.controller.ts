@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   UseGuards,
+  ValidationPipe,
 } from '@nestjs/common';
 import { ApiHeader, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -35,7 +36,8 @@ export class AdminCompanyController {
 
   @Post('/create-employee')
   createCompany(
-    @Body() { name, email, salary, company_id }: UpsertEmployeeDto,
+    @Body(new ValidationPipe())
+    { name, email, salary, company_id }: UpsertEmployeeDto,
   ) {
     return this.adminCompanyService.createEmployee(
       name,
@@ -47,7 +49,8 @@ export class AdminCompanyController {
 
   @Put('/update-employee/:user_id')
   async updateEmployee(
-    @Body() { name, email, salary, company_id }: UpsertEmployeeDto,
+    @Body(new ValidationPipe())
+    { name, email, salary, company_id }: UpsertEmployeeDto,
     @Param('user_id') user_id: number,
   ) {
     return await this.adminCompanyService.updateEmployee(
@@ -65,7 +68,7 @@ export class AdminCompanyController {
   }
 
   @Post('/upsert-employee')
-  async upsertEmployee(@Body() dto: ImportEmployeesDto) {
+  async upsertEmployee(@Body(new ValidationPipe()) dto: ImportEmployeesDto) {
     return await this.adminCompanyService.upsertEmployee(dto.employees);
   }
 }
