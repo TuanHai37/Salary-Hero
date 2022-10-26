@@ -13,98 +13,137 @@ export class SalaryHeroService {
   ) {}
 
   async getAllCompany() {
-    const companies = await this.findAllCompany();
-    if (!companies) {
-      throw new BadRequestException(
-        'There are currently no registered companies!',
-      );
-    }
+    try {
+      const companies = await this.findAllCompany();
+      if (!companies) {
+        throw new BadRequestException(
+          'There are currently no registered companies!',
+        );
+      }
 
-    return companies.map((company) => {
+      return companies.map((company) => {
+        return {
+          ...company,
+          name: titleCase(company.name),
+        };
+      });
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
+  }
+
+  async getCompanyById(company_id: number) {
+    try {
+      const company = await this.findOneById(company_id);
+      if (!company) {
+        throw new BadRequestException('No company found!');
+      }
+
       return {
         ...company,
         name: titleCase(company.name),
       };
-    });
-  }
-
-  async getCompanyById(company_id: number) {
-    const company = await this.findOneById(company_id);
-    if (!company) {
-      throw new BadRequestException('No company found!');
+    } catch (err) {
+      return {
+        message: err,
+      };
     }
-
-    return {
-      ...company,
-      name: titleCase(company.name),
-    };
   }
 
   async createCompany(name: string) {
-    name = name.toLowerCase();
-    const existedCompany = await this.findOneByName(name);
+    try {
+      name = name.toLowerCase();
+      const existedCompany = await this.findOneByName(name);
 
-    if (existedCompany) {
-      throw new BadRequestException('Company already had name!');
+      if (existedCompany) {
+        throw new BadRequestException('Company already had name!');
+      }
+
+      return await this.companyRepository.save({ name });
+    } catch (err) {
+      return {
+        message: err,
+      };
     }
-
-    return await this.companyRepository.save({ name });
   }
 
   async addClientAdmin(name: string, email: string, company_id: any) {
-    email = email.toLowerCase();
-    const existedCompany = await this.findOneById(company_id);
+    try {
+      email = email.toLowerCase();
+      const existedCompany = await this.findOneById(company_id);
 
-    if (!existedCompany) {
-      throw new BadRequestException('No company found!');
+      if (!existedCompany) {
+        throw new BadRequestException('No company found!');
+      }
+
+      const existedEmail = await this.findOneByEmail(email);
+
+      if (existedEmail) {
+        throw new BadRequestException('Email had already exists!');
+      }
+
+      return await this.userRepository.save({
+        name,
+        company_id,
+        email,
+        role: Role.AdminCompany,
+      });
+    } catch (err) {
+      return {
+        message: err,
+      };
     }
-
-    const existedEmail = await this.findOneByEmail(email);
-
-    if (existedEmail) {
-      throw new BadRequestException('Email had already exists!');
-    }
-
-    return await this.userRepository.save({
-      name,
-      company_id,
-      email,
-      role: Role.AdminCompany,
-    });
   }
 
   async updateCompany(name: string, company_id: number) {
-    name = name.toLowerCase();
-    const existedCompany = await this.findOneById(company_id);
+    try {
+      name = name.toLowerCase();
+      const existedCompany = await this.findOneById(company_id);
 
-    if (!existedCompany) {
-      throw new BadRequestException('No company found!');
+      if (!existedCompany) {
+        throw new BadRequestException('No company found!');
+      }
+
+      const existedCompanyName = await this.findOneByNameAndId(
+        name,
+        company_id,
+      );
+
+      if (existedCompanyName) {
+        throw new BadRequestException('Company already had name!');
+      }
+
+      await this.companyRepository.update({ company_id }, { name });
+
+      return {
+        ...existedCompany,
+        name,
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
     }
-
-    const existedCompanyName = await this.findOneByNameAndId(name, company_id);
-
-    if (existedCompanyName) {
-      throw new BadRequestException('Company already had name!');
-    }
-
-    await this.companyRepository.update({ company_id }, { name });
-
-    return {
-      ...existedCompany,
-      name,
-    };
   }
 
   async deleteCompanyById(company_id: number) {
-    const company = await this.findOneById(company_id);
-    if (!company) {
-      throw new BadRequestException('No company found!');
-    }
+    try {
+      const company = await this.findOneById(company_id);
+      if (!company) {
+        throw new BadRequestException('No company found!');
+      }
 
-    await this.companyRepository.delete({ company_id });
-    return {
-      message: 'delete company success',
-    };
+      await this.companyRepository.delete({ company_id });
+      return {
+        message: 'delete company success',
+      };
+    } catch (err) {
+      return {
+        message: err,
+      };
+    }
   }
 
   findOneByName(name: string) {
