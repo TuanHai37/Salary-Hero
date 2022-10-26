@@ -12,19 +12,25 @@ export class EmployeeService {
   ) {}
 
   async transactions(amount: number, user_id: number) {
-    const employee = await this.findOneById(user_id);
-    if (!employee) {
-      throw new BadRequestException('No employee found!');
-    }
+    try {
+      const employee = await this.findOneById(user_id);
+      if (!employee) {
+        throw new BadRequestException('No employee found!');
+      }
 
-    const salary = Number(employee?.salary);
-    const halfSalaryOfEmployee = salary / 2;
-    if (amount > halfSalaryOfEmployee) {
-      throw new BadRequestException(
-        'Request amount is going to be over 50% of your salary',
-      );
+      const salary = Number(employee?.salary);
+      const halfSalaryOfEmployee = salary / 2;
+      if (amount > halfSalaryOfEmployee) {
+        throw new BadRequestException(
+          'Request amount is going to be over 50% of your salary',
+        );
+      }
+      return this.requestsRepository.save({ user_id, amount });
+    } catch (err) {
+      return {
+        message: err,
+      };
     }
-    return this.requestsRepository.save({ user_id, amount });
   }
 
   findOneById(user_id: number) {
